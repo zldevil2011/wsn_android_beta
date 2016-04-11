@@ -7,4 +7,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_setting">setting</string>
     <string name="title_activity_taking_photo">TakingPhoto</string>
+    <string name="title_activity_index">index</string>
+    <string name="takephoto">拍照</string>
 </resources>
