@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:paddingBottom="60.0dip"
+            android:paddingBottom="10.0dip"
             android:paddingLeft="10.0dip"
             android:paddingRight="10.0dip"
             android:paddingTop="10.0dip" >
@@ -40,12 +40,11 @@
                         android:layout_width="fill_parent"
                         android:layout_marginLeft="2.0dip"
                         android:layout_marginRight="2.0dip"
-                        android:background="@drawable/more_item_press"
-                        android:paddingBottom="16.0dip"
+                        android:paddingBottom="8.0dip"
                         android:paddingTop="8.0dip" >
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
+                            android:layout_height="match_parent"
                             android:drawableLeft="@android:drawable/star_on"
                             android:drawablePadding="10.0dip"
                             android:gravity="center_vertical"
@@ -53,7 +52,7 @@
                             android:paddingLeft="17.0dip"
                             android:text="我的设置"
                             android:textColor="#ff333333"
-                            android:textSize="16.0sp" />
+                            android:textSize="12.0sp" />
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
@@ -74,7 +73,7 @@
                 android:paddingLeft="4.0dip"
                 android:text="我的设置"
                 android:textColor="#ff888888"
-                android:textSize="16.0sp" />
+                android:textSize="12.0sp" />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
@@ -90,20 +89,19 @@
                         android:layout_width="fill_parent"
                         android:layout_marginLeft="2.0dip"
                         android:layout_marginRight="2.0dip"
-                        android:background="@drawable/more_item_press"
-                        android:paddingBottom="16.0dip"
-                        android:paddingTop="16.0dip" >
+                        android:paddingBottom="8.0dip"
+                        android:paddingTop="8.0dip" >
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
-                            android:drawableLeft="@android:drawable/btn_radio"
+                            android:drawableLeft="@android:drawable/star_on"
                             android:drawablePadding="10.0dip"
                             android:gravity="center_vertical"
                             android:includeFontPadding="false"
                             android:paddingLeft="17.0dip"
                             android:text="账号管理"
                             android:textColor="#ff333333"
-                            android:textSize="16.0sp" />
+                            android:textSize="12.0sp" />
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
@@ -118,21 +116,20 @@
                         android:layout_width="fill_parent"
                         android:layout_marginLeft="2.0dip"
                         android:layout_marginRight="2.0dip"
-                        android:background="@drawable/more_item_press"
-                        android:paddingBottom="16.0dip"
-                        android:paddingTop="16.0dip" >
+                        android:paddingBottom="8.0dip"
+                        android:paddingTop="8.0dip" >
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
-                            android:drawableLeft="@android:drawable/btn_radio"
+                            android:drawableLeft="@android:drawable/star_on"
                             android:drawablePadding="10.0dip"
                             android:gravity="center_vertical"
                             android:includeFontPadding="false"
                             android:paddingLeft="17.0dip"
                             android:text="个人爱好"
                             android:textColor="#ff333333"
-                            android:textSize="16.0sp" />
+                            android:textSize="12.0sp" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -148,21 +145,20 @@
                         android:layout_width="fill_parent"
                         android:layout_marginLeft="2.0dip"
                         android:layout_marginRight="2.0dip"
-                        android:background="@drawable/more_item_press"
-                        android:paddingBottom="16.0dip"
-                        android:paddingTop="16.0dip" >
+                        android:paddingBottom="8.0dip"
+                        android:paddingTop="8.0dip" >
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
-                            android:drawableLeft="@android:drawable/btn_radio"
+                            android:drawableLeft="@android:drawable/star_on"
                             android:drawablePadding="10.0dip"
                             android:gravity="center_vertical"
                             android:includeFontPadding="false"
                             android:paddingLeft="17.0dip"
                             android:text="浏览记录"
                             android:textColor="#ff333333"
-                            android:textSize="16.0sp" />
+                            android:textSize="12.0sp" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -183,7 +179,7 @@
                 android:paddingLeft="4.0dip"
                 android:text="客户端"
                 android:textColor="#ff888888"
-                android:textSize="16.0sp" />
+                android:textSize="12.0sp" />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
@@ -201,21 +197,20 @@
                         android:layout_width="fill_parent"
                         android:layout_marginLeft="2.0dip"
                         android:layout_marginRight="2.0dip"
-                        android:background="@drawable/more_item_press"
-                        android:paddingBottom="16.0dip"
-                        android:paddingTop="16.0dip" >
+                        android:paddingBottom="8.0dip"
+                        android:paddingTop="8.0dip" >
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
-                            android:drawableLeft="@android:drawable/sym_action_chat"
+                            android:drawableLeft="@android:drawable/star_on"
                             android:drawablePadding="10.0dip"
                             android:gravity="center_vertical"
                             android:includeFontPadding="false"
                             android:paddingLeft="17.0dip"
                             android:text="设置"
                             android:textColor="#ff333333"
-                            android:textSize="16.0sp" />
+                            android:textSize="12.0sp" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -231,9 +226,8 @@
                         android:layout_width="fill_parent"
                         android:layout_marginLeft="2.0dip"
                         android:layout_marginRight="2.0dip"
-                        android:background="@drawable/more_item_press"
-                        android:paddingBottom="16.0dip"
-                        android:paddingTop="16.0dip" >
+                        android:paddingBottom="8.0dip"
+                        android:paddingTop="8.0dip" >
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -245,7 +239,7 @@
                             android:paddingLeft="17.0dip"
                             android:text="意见反馈"
                             android:textColor="#ff333333"
-                            android:textSize="16.0sp" />
+                            android:textSize="12.0sp" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -261,9 +255,8 @@
                         android:layout_width="fill_parent"
                         android:layout_marginLeft="2.0dip"
                         android:layout_marginRight="2.0dip"
-                        android:background="@drawable/more_item_press"
-                        android:paddingBottom="16.0dip"
-                        android:paddingTop="16.0dip" >
+                        android:paddingBottom="8.0dip"
+                        android:paddingTop="8.0dip" >
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -275,7 +268,7 @@
                             android:paddingLeft="17.0dip"
                             android:text="检测更新"
                             android:textColor="#ff333333"
-                            android:textSize="16.0sp" />
+                            android:textSize="12.0sp" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -291,9 +284,8 @@
                         android:layout_width="fill_parent"
                         android:layout_marginLeft="2.0dip"
                         android:layout_marginRight="2.0dip"
-                        android:background="@drawable/more_item_press"
-                        android:paddingBottom="16.0dip"
-                        android:paddingTop="16.0dip" >
+                        android:paddingBottom="8.0dip"
+                        android:paddingTop="8.0dip" >
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -305,7 +297,7 @@
                             android:paddingLeft="17.0dip"
                             android:text="关于"
                             android:textColor="#ff333333"
-                            android:textSize="16.0sp" />
+                            android:textSize="12.0sp" />
 
                         <ImageView
                             android:layout_width="wrap_content"

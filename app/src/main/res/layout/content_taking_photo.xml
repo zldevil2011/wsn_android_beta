@@ -18,7 +18,14 @@
             android:id="@+id/takephoto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/takephoto" />
+        <Button
+            android:id="@+id/startPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="预览" />
     </LinearLayout>
     <SurfaceView
         android:id="@+id/surfaceView1"

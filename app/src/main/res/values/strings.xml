@@ -9,4 +9,6 @@
     <string name="title_activity_taking_photo">TakingPhoto</string>
     <string name="title_activity_index">index</string>
     <string name="takephoto">拍照</string>
+    <string name="title_activity_weather">Weather</string>
+    <string name="title_activity_device">Device</string>
 </resources>

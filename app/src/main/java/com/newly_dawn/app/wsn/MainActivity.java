@@ -25,10 +25,10 @@ public class MainActivity extends AppCompatActivity
     int camera_status = 0;
     private int current_menu = 0;
     private int[] activity_page_list = new int[]{R.id.activity_index_page,R.id.activity_taking_photo_page,
-            R.id.activity_setting_page, R.id.activity_setting_page,R.id.activity_setting_page,
+            R.id.activity_weather_page, R.id.activity_device_page,R.id.activity_setting_page,
             R.id.activity_setting_page,R.id.activity_setting_page};
     private int[] activity_list = new int[]{R.layout.activity_index, R.layout.activity_taking_photo,
-            R.layout.activity_setting,R.layout.activity_setting,R.layout.activity_setting,
+            R.layout.activity_weather,R.layout.activity_device,R.layout.activity_setting,
             R.layout.activity_setting,R.layout.activity_setting};
     private int[] menu_id = new int[]{R.id.nav_index, R.id.nav_camera, R.id.nav_gallery,R.id.nav_slideshow,
             R.id.nav_manage, R.id.nav_share, R.id.nav_send};
@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Index index = new Index();
+        index.build(MainActivity.this);
         build_page();
         buidl_drawer();
     }
@@ -158,9 +160,13 @@ public class MainActivity extends AppCompatActivity
                 Log.i("zl_debug_camera_return", "" + camera_status);
                 return true;
             case 2:
-                break;
+                Weather weather = new Weather();
+                weather.build(MainActivity.this);
+                return true;
             case 3:
-                break;
+                Device device = new Device();
+                device.build(MainActivity.this);
+                return true;
             case 4:
                 Setting setting = new Setting();
                 setting.build(MainActivity.this);
@@ -173,6 +179,7 @@ public class MainActivity extends AppCompatActivity
 
         return false;
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
