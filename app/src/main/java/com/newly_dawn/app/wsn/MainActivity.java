@@ -1,13 +1,10 @@
 package com.newly_dawn.app.wsn;
 
-import android.content.Intent;
-import android.graphics.CornerPathEffect;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,19 +16,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public Camera father_camera;
+    int camera_status = 0;
     private int current_menu = 0;
+    private int[] activity_page_list = new int[]{R.id.activity_index_page,R.id.activity_taking_photo_page,
+            R.id.activity_setting_page, R.id.activity_setting_page,R.id.activity_setting_page,
+            R.id.activity_setting_page,R.id.activity_setting_page};
+    private int[] activity_list = new int[]{R.layout.activity_index, R.layout.activity_taking_photo,
+            R.layout.activity_setting,R.layout.activity_setting,R.layout.activity_setting,
+            R.layout.activity_setting,R.layout.activity_setting};
+    private int[] menu_id = new int[]{R.id.nav_index, R.id.nav_camera, R.id.nav_gallery,R.id.nav_slideshow,
+            R.id.nav_manage, R.id.nav_share, R.id.nav_send};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,12 +107,16 @@ public class MainActivity extends AppCompatActivity
         if(preLayout != null && nextLayout != null) {
             content_frame.removeView(preLayout);
             content_frame.addView(nextLayout);
-            TakingPhoto tk = new TakingPhoto();
-            tk.build(LayoutInflater.from(MainActivity.this), MainActivity.this);
-            build_page();
+//            TakingPhoto tk = new TakingPhoto();
+//            tk.build(LayoutInflater.from(MainActivity.this), MainActivity.this);
+
         }else{
+
             Toast.makeText(MainActivity.this, "敬请期待", Toast.LENGTH_SHORT).show();
             current_menu = pre_current_menu;
+        }
+        if(!updateLister(current_menu)){
+            build_page();
         }
         buidl_drawer();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -121,66 +125,60 @@ public class MainActivity extends AppCompatActivity
     }
     public CoordinatorLayout getPreLayout(){
         CoordinatorLayout preLayout = null;
-        switch (current_menu){
-            case 0:
-                preLayout = (CoordinatorLayout)findViewById(R.id.activity_index_page);
-                break;
-            case 1:
-                preLayout = (CoordinatorLayout)findViewById(R.id.activity_taking_photo_page);
-                break;
-            case 2:
-                preLayout = (CoordinatorLayout)findViewById(R.id.activity_setting_page);
-                break;
-            case 3:
-                preLayout = (CoordinatorLayout)findViewById(R.id.activity_setting_page);
-                break;
-            case 4:
-                preLayout = (CoordinatorLayout)findViewById(R.id.activity_setting_page);
-                break;
-            case 5:
-                preLayout = (CoordinatorLayout)findViewById(R.id.activity_setting_page);
-                break;
-            case 6:
-                preLayout = (CoordinatorLayout)findViewById(R.id.activity_setting_page);
-                break;
-            default:
-                preLayout = (CoordinatorLayout)findViewById(R.id.activity_index_page);
-                break;
-        }
+        preLayout = (CoordinatorLayout)findViewById(activity_page_list[current_menu]);
         return preLayout;
     }
     public CoordinatorLayout getNextLayout(int id){
         LayoutInflater factorys = LayoutInflater.from(MainActivity.this);
         final View nextView;
         CoordinatorLayout nextLayout = null;
-        if(id == R.id.nav_index && current_menu != 0){
-            // turn to the Home
-            nextView = factorys.inflate(R.layout.activity_index, null);
-            nextLayout = (CoordinatorLayout)nextView.findViewById(R.id.activity_index_page);
-            current_menu = 0;
-        }
-        else if (id == R.id.nav_camera && current_menu != 1) {
-            // Handle the camera action
-            nextView = factorys.inflate(R.layout.activity_taking_photo, null);
-            nextLayout = (CoordinatorLayout)nextView.findViewById(R.id.activity_taking_photo_page);
-            current_menu = 1;
-        } else if (id == R.id.nav_gallery && current_menu != 2) {
-            current_menu = 2;
-        } else if (id == R.id.nav_slideshow && current_menu != 3) {
-            current_menu = 3;
-        } else if (id == R.id.nav_manage && current_menu != 4) {
-            nextView = factorys.inflate(R.layout.activity_setting, null);
-            nextLayout = (CoordinatorLayout)nextView.findViewById(R.id.activity_setting_page);
-            current_menu = 4;
-        } else if (id == R.id.nav_share && current_menu != 5) {
-            current_menu = 5;
-        } else if (id == R.id.nav_send && current_menu != 6) {
-            current_menu = 6;
+        for(int i = 0; i < menu_id.length; ++i){
+            if(id == menu_id[i] && current_menu != i){
+                nextView = factorys.inflate(activity_list[i], null);
+                nextLayout = (CoordinatorLayout)nextView.findViewById(activity_page_list[i]);
+                current_menu = i;
+                break;
+            }
         }
         return nextLayout;
     }
-    public void update_listener(int id){
-        TakingPhoto tk = new TakingPhoto();
-        tk.build(LayoutInflater.from(MainActivity.this), MainActivity.this);
+    public boolean updateLister(int id){
+        switch (id){
+            case 0:
+                Index index = new Index();
+                index.build(MainActivity.this);
+                return true;
+            case 1:
+                TakingPhoto tk = new TakingPhoto();
+                if(camera_status == 0){
+                    father_camera = Camera.open();
+                    camera_status = 1;
+                }
+                tk.build(MainActivity.this, father_camera);
+                Log.i("zl_debug_camera_return", "" + camera_status);
+                return true;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                Setting setting = new Setting();
+                setting.build(MainActivity.this);
+                return true;
+            case 5:
+                break;
+            case 6:
+                break;
+        }
+
+        return false;
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (father_camera != null){
+            father_camera.release();        // release the camera for other applications
+            father_camera = null;
+        }
     }
 }

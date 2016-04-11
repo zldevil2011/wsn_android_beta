@@ -21,9 +21,7 @@ import android.widget.Button;
 import java.io.IOException;
 
 public class TakingPhoto{
-    private Camera camera; // 相机对象
-    public void build(LayoutInflater factorys, AppCompatActivity context){
-
+    public void build(AppCompatActivity context, Camera father_camera){
         final View nextView;
         Log.i("zl_debug", "TAKINGPHOTO");
         Toolbar toolbar = (Toolbar) context.findViewById(R.id.toolbar);
@@ -36,9 +34,9 @@ public class TakingPhoto{
                         .setAction("Action", null).show();
             }
         });
-        listener(context);
+        listener(context, father_camera);
     }
-    public void listener(AppCompatActivity context){
+    public void listener(AppCompatActivity context, final Camera camera){
         Button takePhoto = (Button)context.findViewById(R.id.takephoto); // 获取“预览”按钮
         SurfaceView sv = (SurfaceView)context.findViewById(R.id.surfaceView1); // 获取SurfaceView组件，用于显示相机预览
         final SurfaceHolder sh = sv.getHolder();
@@ -46,20 +44,16 @@ public class TakingPhoto{
         takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 如果相机为非预览模式，则打开相机
-
-                    camera=Camera.open(); // 打开相机
-
                 try {
                     camera.setDisplayOrientation(90);
                     camera.setPreviewDisplay(sh); // 设置用于显示预览的SurfaceView
-                    Camera.Parameters parameters = camera.getParameters();	//获取相机参数
-                    parameters.setPictureSize(640, 480);	//设置预览画面的尺寸
-                    parameters.setPictureFormat(PixelFormat.JPEG);	//指定图片为JPEG图片
-                    parameters.set("jpeg-quality", 80);	//设置图片的质量
-                    parameters.setPictureSize(640, 480); 	//设置拍摄图片的尺寸
-                    camera.setParameters(parameters);	//重新设置相机参数
-                    camera.startPreview();	//开始预览
+                    Camera.Parameters parameters = camera.getParameters();    //获取相机参数
+                    parameters.setPictureSize(640, 480);    //设置预览画面的尺寸
+                    parameters.setPictureFormat(PixelFormat.JPEG);    //指定图片为JPEG图片
+                    parameters.set("jpeg-quality", 80);    //设置图片的质量
+                    parameters.setPictureSize(640, 480);    //设置拍摄图片的尺寸
+                    camera.setParameters(parameters);    //重新设置相机参数
+                    camera.startPreview();    //开始预览
                     camera.autoFocus(null); // 设置自动对焦
                 } catch (IOException e) {
                     e.printStackTrace();
