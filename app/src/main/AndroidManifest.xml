@@ -33,6 +33,10 @@
         <activity
             android:name=".Device"
             android:label="@string/title_activity_device"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Login"
+            android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
