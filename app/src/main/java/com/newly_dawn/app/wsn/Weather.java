@@ -36,7 +36,7 @@ public class Weather{
     private Set<String> provices = new HashSet<>();
     private Map<String, HashSet> citys = new HashMap<>();
     private Map<String, HashSet> countys = new HashMap<>();
-
+    private Map<String, String> CODE = new HashMap<>();
     private String[][] cityss ={{"朝阳" ,  "阳台" ,  "紫金" ,  "海淀"},
             { "抚顺" ,  "大连" ,  "青岛" ,  "烟台"},
             {"济南" ,  "菏泽" , "威海", "单县" },
@@ -95,7 +95,7 @@ public class Weather{
         for(int i = 0; i < len; ++i){
             provices.add(cityCode.get(i).getProvice());
         }
-        Log.i("provices_len", "" + provices.size());
+//        Log.i("provices_len", "" + provices.size());
         int len_provice = provices.size();
         int step = 0;
         for(String provice : provices){
@@ -108,10 +108,9 @@ public class Weather{
             Log.i("_len__", provice + " " + tmp);
             citys.put(provice, tmp);
         }
-        Log.i("citys_len", "" + citys.size());
+//        Log.i("citys_len", "" + citys.size());
         step = 0;
         for(HashSet<String> value : citys.values()){
-
             for(String city : value){
                 HashSet<String> tmp = new HashSet<>();
                 for(step = 0; step < len; ++step){
@@ -123,7 +122,19 @@ public class Weather{
                 countys.put(city, tmp);
             }
         }
-        Log.i("countys_len", "" + countys.size());
+//        Log.i("countys_len", "" + countys.size());
+        for(HashSet<String> value : countys.values()){
+            for(String county : value){
+                int code = 0;
+                for(step = 0; step < len; ++step){
+                    if(cityCode.get(step).getCounty().equals(county)){
+                        code = cityCode.get(step).getID();
+                        break;
+                    }
+                }
+                CODE.put(county, String.valueOf(code));
+            }
+        }
     }
     public ArrayList<City> ParseXml(XmlPullParser parser){
         ArrayList<City> CityArray = new ArrayList<City>();
