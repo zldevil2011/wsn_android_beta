@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Weather{
-    private Spinner spinnerTopProvince = null;
+    private Spinner spinnerProvince = null;
     private Spinner spinnerSubCitys = null;
     private Spinner spinnerSubCountys = null;
     private ArrayList<City> cityCode = null;
@@ -61,36 +61,29 @@ public class Weather{
 
     }
     public void listener(final AppCompatActivity context){
-        spinnerTopProvince=(Spinner)context.findViewById(R.id.Province);
+        spinnerProvince=(Spinner)context.findViewById(R.id.Province);
         spinnerSubCitys=(Spinner)context.findViewById(R.id.City);
         spinnerSubCountys=(Spinner)context.findViewById(R.id.County);
-        spinnerTopProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Weather.this.arrayAdapter = new ArrayAdapter<CharSequence>(context,
-//                        android.R.layout.simple_spinner_item, citys[position]);
-//                spinnerSubCitys.setAdapter(arrayAdapter);
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         readCityCode();
         for(int i = 0; i < cityCode.size(); ++i){
             City tmp = cityCode.get(i);
             Log.i("cityCode", "" +tmp.getProvice() + " " +tmp.getCity() + " " +tmp.getCounty() + " " + tmp.getID());
         }
+        initUI();
+    }
+    public void initUI(){
+        String[] arr_T = new String[]{};
+        String[] proviceArr = (String[]) provices.toArray(arr_T);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, proviceArr);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerProvince.setAdapter(adapter);
     }
     public void readCityCode(){
         cityCode = ParseXml(getXMLFromResXml());
         getList();
     }
     public void getList(){
-        ArrayList<Set> zl = new ArrayList<>();
-        Map<String, Set> zll = new HashMap<>();
-        zll.put("a", new HashSet());
         int len = cityCode.size();
         for(int i = 0; i < len; ++i){
             provices.add(cityCode.get(i).getProvice());
