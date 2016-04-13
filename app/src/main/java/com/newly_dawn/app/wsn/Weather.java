@@ -1,11 +1,17 @@
 package com.newly_dawn.app.wsn;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.XmlResourceParser;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,10 +24,14 @@ import android.widget.Toast;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -96,6 +106,7 @@ public class Weather{
 
         spinnerProvince.setOnItemSelectedListener(new myProvinceItemSelectedListener());
         spinnerSubCitys.setOnItemSelectedListener(new myCityItemSelectedListener());
+        spinnerSubCountys.setOnItemSelectedListener(new myCountyItemSelectedListener());
     }
     private class myProvinceItemSelectedListener implements AdapterView.OnItemSelectedListener{
 
@@ -117,7 +128,7 @@ public class Weather{
 
         }
     }
-    public class myCityItemSelectedListener implements AdapterView.OnItemSelectedListener{
+    private class myCityItemSelectedListener implements AdapterView.OnItemSelectedListener{
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -125,6 +136,32 @@ public class Weather{
             countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, countyArr);
             countyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerSubCountys.setAdapter(countyAdapter);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
+    private class myCountyItemSelectedListener implements AdapterView.OnItemSelectedListener{
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String cityCode = CODE.get(countyArr[position]);
+            Log.i("CODE_TEST", cityCode);
+
+            if (!isNetworkAvailable(myContext)) {
+//                Log.i("zl_debug_", "Internet error");
+                alerNetErr();
+            }
+            String http = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityCode;
+            try {
+                String httpString = readHttp(http);
+                Log.i("CODE_TEST", httpString);
+            } catch (Exception e) {
+                Log.i("CODE_TEST", "CONNECTION FAILED");
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -255,5 +292,97 @@ public class Weather{
             e.printStackTrace();
         }
         return xmlParser;
+    }
+    /**
+     * 从指定的URL中获取数组
+     * @param urlPath
+     * @return
+     * @throws Exception
+     */
+    public static String readHttp(String urlPath) throws Exception {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        Log.i("CODE_TEST_", "1");
+        byte[] data = new byte[1024];
+        int len = 0;
+        URL url = new URL(urlPath);
+        Log.i("CODE_TEST_", "2");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        Log.i("CODE_TEST_", "3");
+        InputStreamReader inStream = new InputStreamReader(conn.getInputStream());
+        Log.i("CODE_TEST_", "4");
+        BufferedReader buffer = new BufferedReader(inStream);
+        String result = "", inputLine = null;
+        while ((inputLine = buffer.readLine()) != null) {
+            result += inputLine + "\n";
+        }
+        Log.i("CODE_TEST_", "5");
+        inStream.close();
+        Log.i("CODE_TEST_", "" + outStream.toByteArray());
+        return new String(outStream.toByteArray());//通过out.Stream.toByteArray获取到写的数据
+    }
+    public boolean isNetworkAvailable(Activity activity)
+    {
+        Context context = activity.getApplicationContext();
+        // 获取手机所有连接管理对象（包括对wi-fi,net等连接的管理）
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager == null)
+        {
+            return false;
+        }
+        else
+        {
+            // 获取NetworkInfo对象
+            NetworkInfo[] networkInfo = connectivityManager.getAllNetworkInfo();
+
+            if (networkInfo != null && networkInfo.length > 0)
+            {
+                for (int i = 0; i < networkInfo.length; i++)
+                {
+                    System.out.println(i + "===状态===" + networkInfo[i].getState());
+                    System.out.println(i + "===类型===" + networkInfo[i].getTypeName());
+                    // 判断当前网络状态是否为连接状态
+                    if (networkInfo[i].getState() == NetworkInfo.State.CONNECTED)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public void alerNetErr() {
+
+        // 对话框
+        AlertDialog.Builder ab = new AlertDialog.Builder(myContext);
+        ab.setTitle("网络错误");
+        ab.setMessage("请检查手机数据连接");
+        // 设置操作对象
+        ab.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 取消对话框
+                        dialog.cancel();
+                        // 打开网络设置Activity
+                        Intent it = new Intent(
+                                android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                        myContext.startActivity(it);
+                    }
+                });
+        ab.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 取消对话框
+                        dialog.cancel();
+                        // 退出程序
+                        // exitApp(context);
+                    }
+                });
+        // 显示
+        ab.create().show();
     }
 }
