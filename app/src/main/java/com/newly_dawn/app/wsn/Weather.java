@@ -94,15 +94,15 @@ public class Weather{
         provinceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerProvince.setAdapter(provinceAdapter);
 
-        cityArr = (String[]) citys.get(provinceArr[0]).toArray(arr_T_C);
-        cityAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, cityArr);
-        cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSubCitys.setAdapter(cityAdapter);
-
-        countyArr = (String[]) countys.get(cityArr[0]).toArray(arr_T_CY);
-        countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, countyArr);
-        countyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSubCountys.setAdapter(countyAdapter);
+//        cityArr = (String[]) citys.get(provinceArr[0]).toArray(arr_T_C);
+//        cityAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, cityArr);
+//        cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinnerSubCitys.setAdapter(cityAdapter);
+//
+//        countyArr = (String[]) countys.get(cityArr[0]).toArray(arr_T_CY);
+//        countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, countyArr);
+//        countyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinnerSubCountys.setAdapter(countyAdapter);
 
         spinnerProvince.setOnItemSelectedListener(new myProvinceItemSelectedListener());
         spinnerSubCitys.setOnItemSelectedListener(new myCityItemSelectedListener());
@@ -117,10 +117,10 @@ public class Weather{
             cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerSubCitys.setAdapter(cityAdapter);
 
-            countyArr = (String[]) countys.get(cityArr[0]).toArray(arr_T_CY);
-            countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, countyArr);
-            countyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerSubCountys.setAdapter(countyAdapter);
+//            countyArr = (String[]) countys.get(cityArr[0]).toArray(arr_T_CY);
+//            countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, countyArr);
+//            countyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            spinnerSubCountys.setAdapter(countyAdapter);
         }
 
         @Override
