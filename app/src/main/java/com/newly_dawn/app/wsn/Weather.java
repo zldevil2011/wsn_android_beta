@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -33,15 +34,20 @@ public class Weather{
     private Spinner spinnerSubCitys = null;
     private Spinner spinnerSubCountys = null;
     private ArrayList<City> cityCode = null;
-    private Set<String> provices = new HashSet<>();
+    private Set<String> provinces = new HashSet<>();
     private Map<String, HashSet> citys = new HashMap<>();
     private Map<String, HashSet> countys = new HashMap<>();
     private Map<String, String> CODE = new HashMap<>();
-    private String[][] cityss ={{"朝阳" ,  "阳台" ,  "紫金" ,  "海淀"},
-            { "抚顺" ,  "大连" ,  "青岛" ,  "烟台"},
-            {"济南" ,  "菏泽" , "威海", "单县" },
-            {"开封" ,  "安阳" ,  "洛阳" ,  "南阳"}};
-    private ArrayAdapter<CharSequence> arrayAdapter = null;
+    ArrayAdapter<String> provinceAdapter = null;
+    ArrayAdapter<String> cityAdapter = null;
+    ArrayAdapter<String> countyAdapter = null;
+    final String[] arr_T_P = new String[]{};
+    String[] provinceArr = null;
+    final String[] arr_T_C = new String[]{};
+    String[] cityArr = null;
+    final String[] arr_T_CY = new String[]{};
+    String[] countyArr = null;
+
     private AppCompatActivity myContext;
     public void build(AppCompatActivity context){
         myContext = context;
@@ -66,18 +72,65 @@ public class Weather{
         spinnerSubCountys=(Spinner)context.findViewById(R.id.County);
 
         readCityCode();
-        for(int i = 0; i < cityCode.size(); ++i){
-            City tmp = cityCode.get(i);
-            Log.i("cityCode", "" +tmp.getProvice() + " " +tmp.getCity() + " " +tmp.getCounty() + " " + tmp.getID());
-        }
+//        for(int i = 0; i < cityCode.size(); ++i){
+//            City tmp = cityCode.get(i);
+//            Log.i("cityCode", "" +tmp.getProvice() + " " +tmp.getCity() + " " +tmp.getCounty() + " " + tmp.getID());
+//        }
         initUI();
     }
     public void initUI(){
-        String[] arr_T = new String[]{};
-        String[] proviceArr = (String[]) provices.toArray(arr_T);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, proviceArr);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerProvince.setAdapter(adapter);
+        provinceArr = (String[]) provinces.toArray(arr_T_P);
+        provinceAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, provinceArr);
+        provinceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerProvince.setAdapter(provinceAdapter);
+
+        cityArr = (String[]) citys.get(provinceArr[0]).toArray(arr_T_C);
+        cityAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, cityArr);
+        cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSubCitys.setAdapter(cityAdapter);
+
+        countyArr = (String[]) countys.get(cityArr[0]).toArray(arr_T_CY);
+        countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, countyArr);
+        countyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSubCountys.setAdapter(countyAdapter);
+
+        spinnerProvince.setOnItemSelectedListener(new myProvinceItemSelectedListener());
+        spinnerSubCitys.setOnItemSelectedListener(new myCityItemSelectedListener());
+    }
+    private class myProvinceItemSelectedListener implements AdapterView.OnItemSelectedListener{
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            cityArr = (String[]) citys.get(provinceArr[position]).toArray(arr_T_C);
+            cityAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, cityArr);
+            cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerSubCitys.setAdapter(cityAdapter);
+
+            countyArr = (String[]) countys.get(cityArr[0]).toArray(arr_T_CY);
+            countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, countyArr);
+            countyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerSubCountys.setAdapter(countyAdapter);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
+    public class myCityItemSelectedListener implements AdapterView.OnItemSelectedListener{
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            countyArr = (String[]) countys.get(cityArr[position]).toArray(arr_T_CY);
+            countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, countyArr);
+            countyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerSubCountys.setAdapter(countyAdapter);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
     }
     public void readCityCode(){
         cityCode = ParseXml(getXMLFromResXml());
@@ -86,12 +139,12 @@ public class Weather{
     public void getList(){
         int len = cityCode.size();
         for(int i = 0; i < len; ++i){
-            provices.add(cityCode.get(i).getProvice());
+            provinces.add(cityCode.get(i).getProvice());
         }
 //        Log.i("provices_len", "" + provices.size());
-        int len_provice = provices.size();
+        int len_provice = provinces.size();
         int step = 0;
-        for(String provice : provices){
+        for(String provice : provinces){
             HashSet<String> tmp = new HashSet<String>();
             for(step = 0; step < len; ++step){
                 if(cityCode.get(step).getProvice().equals(provice)){
