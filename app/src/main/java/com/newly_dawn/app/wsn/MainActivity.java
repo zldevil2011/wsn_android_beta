@@ -1,5 +1,6 @@
 package com.newly_dawn.app.wsn;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -173,6 +174,12 @@ public class MainActivity extends AppCompatActivity
                 setting.build(MainActivity.this);
                 return true;
             case 5:
+                ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+                dialog.setTitle("提示信息");
+                dialog.setMessage("loading......");
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setCancelable(true);
+                dialog.show();
                 break;
             case 6:
                 Login login = new Login();

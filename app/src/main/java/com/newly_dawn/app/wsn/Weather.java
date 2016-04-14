@@ -1,16 +1,16 @@
 package com.newly_dawn.app.wsn;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.XmlResourceParser;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -21,23 +21,25 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import com.newly_dawn.app.wsn.objects.City;
+import com.newly_dawn.app.wsn.objects.WeatherInfo;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,8 +65,10 @@ public class Weather{
     private String http_str = "";
     private Handler handler;
     private AppCompatActivity myContext;
+    private ProgressDialog dialog;
     public void build(AppCompatActivity context){
         myContext = context;
+        dialog = new ProgressDialog(myContext);
         final View nextView;
         Log.i("zl_debug", "Weater");
         Toolbar toolbar = (Toolbar) context.findViewById(R.id.toolbar);
@@ -110,47 +114,146 @@ public class Weather{
 
         spinnerProvince.setOnItemSelectedListener(new myProvinceItemSelectedListener());
         spinnerSubCitys.setOnItemSelectedListener(new myCityItemSelectedListener());
-        spinnerSubCountys.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String cityCode = CODE.get(countyArr[position]);
-                Log.i("CODE_TEST", cityCode);
+        spinnerSubCountys.setOnItemSelectedListener(new myCountyItemSelectedListener());
+//        spinnerSubCountys.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                String cityCode = CODE.get(countyArr[position]);
+//                Log.i("CODE_TEST", cityCode);
+//
+//                if (!isNetworkAvailable(myContext)) {
+////                Log.i("zl_debug_", "Internet error");
+//                    alerNetErr();
+//                }
+//                final String http = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityCode;
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            readHttp(http);
+//                            Log.i("CODE---","success");
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            Log.i("CODE---", "something wrong");
+//                        }
+//                        Message m = handler.obtainMessage(); // 获取一个Message
+//                        handler.sendMessage(m); // 发送消息
+//                    }
+//                }).start();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+//        handler = new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                if (http_str != null) {
+//                    Log.i("ABT", http_str);
+//                    parseWeatherInfo(http_str);
+//                }
+//                super.handleMessage(msg);
+//            }
+//        };
+    }
+    public class MyAsyncTask extends AsyncTask<String, Void, List<WeatherInfo>>{
 
-                if (!isNetworkAvailable(myContext)) {
-//                Log.i("zl_debug_", "Internet error");
-                    alerNetErr();
-                }
-                final String http = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityCode;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            readHttp(http);
-                            Log.i("CODE---","success");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.i("CODE---", "something wrong");
-                        }
-                        Message m = handler.obtainMessage(); // 获取一个Message
-                        handler.sendMessage(m); // 发送消息
-                    }
-                }).start();
+        @Override
+        protected void onPreExecute(){
+            dialog.show();
+        }
+        @Override
+        protected List<WeatherInfo> doInBackground(String... params) {
+            List<WeatherInfo> weatherInfos = new ArrayList<WeatherInfo>();
+            try {
+                readHttp(params[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            Log.i("MY_TEST", "here");
+            weatherInfos = parseWeatherInfo(http_str);
+            Log.i("MY_TEST_CHECK", weatherInfos + "");
+            Log.i("MY_TEST", "ABC");
+            return weatherInfos;
+        }
+        protected void onPostExecute(List<WeatherInfo> result){
+            TextView temperature = (TextView)myContext.findViewById(R.id.temperature);
+            Log.i("MY_TEST", "before write");
+            for(int i = 0; i < result.size(); ++i){
+                Log.i("MY_TEST", result.get(i).getHighTemperature() + " " + result.get(i).getLowTemperature());
+            }
+            temperature.setText(result.get(0).getTemperature() + "℃");
+            Log.i("MY_TEST", "UPDATE UI");
+            dialog.dismiss();
+        }
+    }
+//    public class MyAsyncTask extends AsyncTask<String, Void, List<String>>
+//    {
+//        @Override
+//        protected void onPreExecute()
+//        {
+//            dialog.show();
+//        }
+//        @Override
+//        protected List<String> doInBackground(String... params)
+//        {
+//            List<String> cities = new ArrayList<String>();
+//            String citiesString = HttpUtils.sendPostMessage(params[0], "utf-8");
+//            //    解析服务器端的json数据
+//            cities = JsonUtils.parseCities(citiesString);return cities;
+//        }
+//        @Override
+//        protected void onPostExecute(List<String> result)
+//        {
+//            adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, result);
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            spinner.setAdapter(adapter);
+//            dialog.dismiss();
+//        }
+//    }
+    public static List<WeatherInfo> parseWeatherInfo(String citiesString)
+    {
+        List<WeatherInfo> weatherInfos = new ArrayList<WeatherInfo>();
+        try
+        {
+            JSONObject jsonObject = new JSONObject(citiesString);
+            Log.i("MY_TEST_JSON_OBJECT", "" + jsonObject);
+            JSONObject data = jsonObject.getJSONObject("data");
+            String temperature = data.getString("wendu");
+            JSONArray forecast = data.getJSONArray("forecast");
+            for(int i = 0; i < forecast.length(); i++){
+                Log.i("MY_TEST_PARSE","1");
+                WeatherInfo tmp_wea = new WeatherInfo();
+                Log.i("MY_TEST_PARSE","2");
+                JSONObject tmp = forecast.getJSONObject(i);
+                Log.i("MY_TEST_PARSE", "2+1");
+                tmp_wea.setPlace(data.getString("city"));
+                Log.i("MY_TEST_PARSE", "3");
+                tmp_wea.setDate(tmp.getString("date"));
+                Log.i("MY_TEST_PARSE", "4");
+                tmp_wea.setType(tmp.getString("type"));
+                tmp_wea.setTemperature(data.getString("wendu"));
+                Log.i("MY_TEST_PARSE", "5");
+                tmp_wea.setLowTemperature(tmp.getString("low").substring(2));
+                Log.i("MY_TEST_PARSE", "6");
+                tmp_wea.setHighTemperature(tmp.getString("high").substring(2));
+                Log.i("MY_TEST_PARSE", "7");
+                tmp_wea.setFengli(tmp.getString("fengli"));
+                Log.i("MY_TEST_PARSE", "8");
+                tmp_wea.setFengxiang(tmp.getString("fengxiang"));
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                Log.i("MY_TEST_PARSE",""+tmp_wea);
+                weatherInfos.add(tmp_wea);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-            }
-        });
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                if (http_str != null) {
-                    Log.i("ABT", http_str);
-                }
-                super.handleMessage(msg);
-            }
-        };
+        return weatherInfos;
     }
     private class myProvinceItemSelectedListener implements AdapterView.OnItemSelectedListener{
 
@@ -199,20 +302,26 @@ public class Weather{
                 alerNetErr();
             }
             final String http = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityCode;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        readHttp(http);
-                        Log.i("CODE---","success");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.i("CODE---", "something wrong");
-                    }
-                    Message m = handler.obtainMessage(); // 获取一个Message
-                    handler.sendMessage(m); // 发送消息
-                }
-            }).start();
+            dialog.setTitle("提示信息");
+            dialog.setMessage("loading......");
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setCancelable(false);
+//            dialog.show();
+            new MyAsyncTask().execute(http);
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        readHttp(http);
+////                        Log.i("CODE---","success");
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        Log.i("CODE---", "something wrong");
+//                    }
+//                    Message m = handler.obtainMessage(); // 获取一个Message
+//                    handler.sendMessage(m); // 发送消息
+//                }
+//            }).start();
         }
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
@@ -351,6 +460,7 @@ public class Weather{
      * @throws Exception
      */
     public void readHttp(String urlPath) throws Exception {
+        Log.i("CODE_TEST_URL", urlPath);
         Log.i("CODE_TEST_", "1");
         URL url = new URL(urlPath);
         Log.i("CODE_TEST_", "2");
@@ -361,6 +471,7 @@ public class Weather{
         BufferedReader buffer = new BufferedReader(in); // 获取输入流对象
         String inputLine = null;
         //通过循环逐行读取输入流中的内容
+        http_str = "";
         while ((inputLine = buffer.readLine()) != null) {
             http_str += inputLine + "\n";
         }
