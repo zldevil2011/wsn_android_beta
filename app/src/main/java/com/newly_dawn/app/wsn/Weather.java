@@ -180,11 +180,13 @@ public class Weather{
         }
         protected void onPostExecute(List<WeatherInfo> result){
             TextView temperature = (TextView)myContext.findViewById(R.id.temperature);
+
             Log.i("MY_TEST", "before write");
             for(int i = 0; i < result.size(); ++i){
                 Log.i("MY_TEST", result.get(i).getHighTemperature() + " " + result.get(i).getLowTemperature());
             }
             temperature.setText(result.get(0).getTemperature() + "℃");
+
             Log.i("MY_TEST", "UPDATE UI");
             dialog.dismiss();
         }
