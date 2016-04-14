@@ -101,8 +101,8 @@ public class Weather{
     }
     public void initUI(){
         provinceArr = (String[]) provinces.toArray(arr_T_P);
-        provinceAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, provinceArr);
-        provinceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        provinceAdapter = new ArrayAdapter<String>(myContext, android.R.layout.browser_link_context_header, provinceArr);
+        provinceAdapter.setDropDownViewResource(android.R.layout.preference_category);
         spinnerProvince.setAdapter(provinceAdapter);
 
 //        cityArr = (String[]) citys.get(provinceArr[0]).toArray(arr_T_C);
@@ -289,8 +289,8 @@ public class Weather{
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             cityArr = (String[]) citys.get(provinceArr[position]).toArray(arr_T_C);
-            cityAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, cityArr);
-            cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            cityAdapter = new ArrayAdapter<String>(myContext, android.R.layout.browser_link_context_header, cityArr);
+            cityAdapter.setDropDownViewResource(android.R.layout.preference_category);
             spinnerSubCitys.setAdapter(cityAdapter);
 
 //            countyArr = (String[]) countys.get(cityArr[0]).toArray(arr_T_CY);
@@ -309,8 +309,8 @@ public class Weather{
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             countyArr = (String[]) countys.get(cityArr[position]).toArray(arr_T_CY);
-            countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.simple_spinner_item, countyArr);
-            countyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            countyAdapter = new ArrayAdapter<String>(myContext, android.R.layout.browser_link_context_header, countyArr);
+            countyAdapter.setDropDownViewResource(android.R.layout.preference_category);
             spinnerSubCountys.setAdapter(countyAdapter);
         }
 
