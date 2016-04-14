@@ -16,10 +16,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -159,7 +162,11 @@ public class Weather{
 //        };
     }
     public class MyAsyncTask extends AsyncTask<String, Void, List<WeatherInfo>>{
-
+        List<Map<String,String>> listItems = new ArrayList<>();
+        String[] dateArr = new String[]{};
+        String[] lowArr = new String[]{};
+        String[] highArr = new String[]{};
+        String[] typeArr = new String[]{};
         @Override
         protected void onPreExecute(){
             dialog.show();
@@ -176,6 +183,15 @@ public class Weather{
             weatherInfos = parseWeatherInfo(http_str);
             Log.i("MY_TEST_CHECK", weatherInfos + "");
             Log.i("MY_TEST", "ABC");
+            for(int i = 0; i < weatherInfos.size(); ++i){
+                WeatherInfo tmp = weatherInfos.get(i);
+                Map<String, String> map = new ArrayMap<>();
+                map.put("date", tmp.getDate().substring(tmp.getDate().length() - 3));
+                map.put("lowTemperature",tmp.getLowTemperature());
+                map.put("highTemperature", tmp.getHighTemperature());
+                map.put("weatherType", tmp.getType());
+                listItems.add(map);
+            }
             return weatherInfos;
         }
         protected void onPostExecute(List<WeatherInfo> result){
@@ -189,9 +205,15 @@ public class Weather{
             }
             WeatherInfo today = result.get(0);
             temperature.setText(today.getTemperature() + "℃");
-            todayLow.setText("最低:" + today.getLowTemperature());
-            todayHigh.setText("最高:" + today.getHighTemperature());
+            todayLow.setText(today.getLowTemperature());
+            todayHigh.setText(today.getHighTemperature());
             todayType.setText(today.getType());
+            ListView forecastListView = (ListView)myContext.findViewById(R.id.forecastList);
+            SimpleAdapter adapter = new SimpleAdapter(myContext, listItems, R.layout.weather_forecast_list_item,
+                    new String[]{"date", "lowTemperature", "highTemperature", "weatherType" }, new int[]{
+               R.id.date, R.id.lowTemperature, R.id.highTemperature, R.id.weatherType
+            });
+            forecastListView.setAdapter(adapter);
             Log.i("MY_TEST", "UPDATE UI");
             dialog.dismiss();
         }
@@ -243,9 +265,9 @@ public class Weather{
                 tmp_wea.setType(tmp.getString("type"));
                 tmp_wea.setTemperature(data.getString("wendu"));
                 Log.i("MY_TEST_PARSE", "5");
-                tmp_wea.setLowTemperature(tmp.getString("low").substring(2));
+                tmp_wea.setLowTemperature(tmp.getString("low"));
                 Log.i("MY_TEST_PARSE", "6");
-                tmp_wea.setHighTemperature(tmp.getString("high").substring(2));
+                tmp_wea.setHighTemperature(tmp.getString("high"));
                 Log.i("MY_TEST_PARSE", "7");
                 tmp_wea.setFengli(tmp.getString("fengli"));
                 Log.i("MY_TEST_PARSE", "8");
