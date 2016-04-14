@@ -8,6 +8,8 @@ import android.content.res.XmlResourceParser;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -58,6 +60,8 @@ public class Weather{
     final String[] arr_T_CY = new String[]{};
     String[] countyArr = null;
 
+    private String http_str = "";
+    private Handler handler;
     private AppCompatActivity myContext;
     public void build(AppCompatActivity context){
         myContext = context;
@@ -106,7 +110,47 @@ public class Weather{
 
         spinnerProvince.setOnItemSelectedListener(new myProvinceItemSelectedListener());
         spinnerSubCitys.setOnItemSelectedListener(new myCityItemSelectedListener());
-        spinnerSubCountys.setOnItemSelectedListener(new myCountyItemSelectedListener());
+        spinnerSubCountys.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String cityCode = CODE.get(countyArr[position]);
+                Log.i("CODE_TEST", cityCode);
+
+                if (!isNetworkAvailable(myContext)) {
+//                Log.i("zl_debug_", "Internet error");
+                    alerNetErr();
+                }
+                final String http = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityCode;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            readHttp(http);
+                            Log.i("CODE---","success");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.i("CODE---", "something wrong");
+                        }
+                        Message m = handler.obtainMessage(); // 获取一个Message
+                        handler.sendMessage(m); // 发送消息
+                    }
+                }).start();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if (http_str != null) {
+                    Log.i("ABT", http_str);
+                }
+                super.handleMessage(msg);
+            }
+        };
     }
     private class myProvinceItemSelectedListener implements AdapterView.OnItemSelectedListener{
 
@@ -143,8 +187,8 @@ public class Weather{
 
         }
     }
-    private class myCountyItemSelectedListener implements AdapterView.OnItemSelectedListener{
 
+    private class myCountyItemSelectedListener implements AdapterView.OnItemSelectedListener{
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             String cityCode = CODE.get(countyArr[position]);
@@ -154,21 +198,28 @@ public class Weather{
 //                Log.i("zl_debug_", "Internet error");
                 alerNetErr();
             }
-            String http = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityCode;
-            try {
-                String httpString = readHttp(http);
-                Log.i("CODE_TEST", httpString);
-            } catch (Exception e) {
-                Log.i("CODE_TEST", "CONNECTION FAILED");
-                e.printStackTrace();
-            }
+            final String http = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityCode;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        readHttp(http);
+                        Log.i("CODE---","success");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i("CODE---", "something wrong");
+                    }
+                    Message m = handler.obtainMessage(); // 获取一个Message
+                    handler.sendMessage(m); // 发送消息
+                }
+            }).start();
         }
-
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
 
         }
     }
+
     public void readCityCode(){
         cityCode = ParseXml(getXMLFromResXml());
         getList();
@@ -299,26 +350,38 @@ public class Weather{
      * @return
      * @throws Exception
      */
-    public static String readHttp(String urlPath) throws Exception {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+    public void readHttp(String urlPath) throws Exception {
         Log.i("CODE_TEST_", "1");
-        byte[] data = new byte[1024];
-        int len = 0;
         URL url = new URL(urlPath);
         Log.i("CODE_TEST_", "2");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();	//创建一个HTTP连接
         Log.i("CODE_TEST_", "3");
-        InputStreamReader inStream = new InputStreamReader(conn.getInputStream());
+        InputStreamReader in = new InputStreamReader(urlConn.getInputStream()); // 获得读取的内容
         Log.i("CODE_TEST_", "4");
-        BufferedReader buffer = new BufferedReader(inStream);
-        String result = "", inputLine = null;
+        BufferedReader buffer = new BufferedReader(in); // 获取输入流对象
+        String inputLine = null;
+        //通过循环逐行读取输入流中的内容
         while ((inputLine = buffer.readLine()) != null) {
-            result += inputLine + "\n";
+            http_str += inputLine + "\n";
         }
-        Log.i("CODE_TEST_", "5");
-        inStream.close();
-        Log.i("CODE_TEST_", "" + outStream.toByteArray());
-        return new String(outStream.toByteArray());//通过out.Stream.toByteArray获取到写的数据
+        Log.i("CODE_TEST_", "" + http_str);
+        in.close();	//关闭字符输入流对象
+        urlConn.disconnect();	//断开连接
+//        URL url = new URL(urlPath);
+//
+//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//
+//        InputStreamReader inStream = new InputStreamReader(conn.getInputStream());
+//
+//        BufferedReader buffer = new BufferedReader(inStream);
+//        String result = "", inputLine = null;
+//        while ((inputLine = buffer.readLine()) != null) {
+//            result += inputLine + "\n";
+//        }
+//
+//        inStream.close();
+//        Log.i("CODE_TEST_", "" + outStream.toByteArray());
+//        return new String(outStream.toByteArray());//通过out.Stream.toByteArray获取到写的数据
     }
     public boolean isNetworkAvailable(Activity activity)
     {
