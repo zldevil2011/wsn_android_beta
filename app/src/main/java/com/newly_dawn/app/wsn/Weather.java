@@ -329,6 +329,7 @@ public class Weather{
             if (!isNetworkAvailable(myContext)) {
 //                Log.i("zl_debug_", "Internet error");
                 alerNetErr();
+                return;
             }
             final String http = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityCode;
             dialog.setTitle("提示信息");
