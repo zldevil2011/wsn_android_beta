@@ -3,20 +3,29 @@ package com.newly_dawn.app.wsn;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.newly_dawn.app.wsn.objects.News;
 import com.newly_dawn.app.wsn.objects.WeatherInfo;
+import com.newly_dawn.app.wsn.tools.Browser;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,6 +43,7 @@ public class Index {
     private AppCompatActivity myContext;
     private ProgressDialog dialog;
     private String http_str;
+    private ListView listview;
     public void build(AppCompatActivity context){
         myContext = context;
         dialog = new ProgressDialog(myContext);
@@ -52,27 +62,6 @@ public class Index {
         listener(context);
     }
     public void listener(AppCompatActivity context){
-//        ListView listview = (ListView)context.findViewById(R.id.index_list);
-//        String[] title = new String[]{ "郑州生态廊道内铸铜雕塑遭疯狂盗窃",
-//                "河北美院与村民起冲突 让学生围场子",
-//                "河北鸟贩冰库 300只野生鸟类尸横满地",
-//                "男童为完作业摸螺蛳落水 父亲救其身亡",
-//                "阿富汗7.3级地震 印度等地震感明显",
-//                "上海外地临牌限行 市民排长队购牌",
-//                "中瑞双方支持两国企业、高校和科研机构开展创新合作", "贵州一中学教学楼楼顶护墙垮塌致一名学生死亡" };
-//        String[] time = new String[]{ "2016-04-11 16:05:51", "2016-04-11 16:05:51", "2016-04-11 16:38:05", "2016-04-11 16:38:05",
-//                "2016-04-11 16:38:05","2016-04-11 16:38:05","2016-04-11 16:38:05","2016-04-11 16:38:05"};
-//        List<Map<String, String>> listItems = new ArrayList<Map<String, String>>();
-//        for(int i = 0 ; i < title.length; ++i){
-//            Map<String, String> map = new HashMap<String, String>();
-//            map.put("title", title[i]);
-//            map.put("time", time[i]);
-//            listItems.add(map);
-//        }
-//        SimpleAdapter adapter = new SimpleAdapter(context, listItems, R.layout.index_list_item, new String[]{"title",
-//                "time"}, new int[]{R.id.title, R.id.time});
-//        listview.setAdapter(adapter);
-
         //read news from WangYiTouTiao
         final String http = "http://c.m.163.com/nc/article/headline/T1348647853363/0-20.html";
         dialog.setTitle("提示信息");
@@ -96,14 +85,15 @@ public class Index {
                 e.printStackTrace();
             }
             Log.i("MY_TEST", "here");
-            newsList = parseWeatherInfo(http_str);
+            newsList = parseNewsInfo(http_str);
             Log.i("MY_TEST_CHECK", newsList + "");
             Log.i("MY_TEST", "ABC");
             for(int i = 0; i < newsList.size(); ++i){
                 News tmp = newsList.get(i);
-                Map<String, String> map = new ArrayMap<>();
+                Map<String, String> map = new HashMap<>();
                 map.put("title", tmp.getTitle());
                 map.put("time",tmp.getPtime());
+                map.put("url",tmp.getUrl());
                 listItems.add(map);
             }
             return newsList;
@@ -113,21 +103,76 @@ public class Index {
             for(int i = 0; i < result.size(); ++i){
                 Log.i("MY_TEST", result.get(i).getTitle() + " " + result.get(i).getPtime());
             }
-            ListView listview = (ListView)myContext.findViewById(R.id.index_list);
+            listview = (ListView) myContext.findViewById(R.id.index_list);
             SimpleAdapter adapter = new SimpleAdapter(myContext, listItems, R.layout.index_list_item, new String[]{"title",
-                    "time"}, new int[]{R.id.title, R.id.time});
+                    "time", "url"}, new int[]{R.id.title, R.id.time, R.id.url});
             listview.setAdapter(adapter);
+            listview.setOnItemClickListener(new NewsItemClickListener());
             Log.i("MY_TEST", "UPDATE UI");
             dialog.dismiss();
         }
     }
+    public class NewsItemClickListener implements AdapterView.OnItemClickListener{
 
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            HashMap<String, String> currentItem = (HashMap<String, String>) listview.getItemAtPosition(position);
+            String newsUrl = currentItem.get("url");
+            Log.i("TED---", currentItem.get("url"));
+            Toast.makeText(myContext, currentItem.get("url"), Toast.LENGTH_SHORT).show();
+
+            FrameLayout content_frame = (FrameLayout)myContext.findViewById(R.id.content_frame);
+            CoordinatorLayout preLayout = (CoordinatorLayout)myContext.findViewById(R.id.activity_index_page);
+            CoordinatorLayout nextLayout = null;
+
+            LayoutInflater factorys = LayoutInflater.from(myContext);
+            final View nextView;
+            nextView = factorys.inflate(R.layout.activity_browser, null);
+            nextLayout = (CoordinatorLayout)nextView.findViewById(R.id.activity_browser_page);
+            Log.i("browser_debug", "" + preLayout + " : " + nextLayout);
+            if(preLayout != null && nextLayout != null) {
+                content_frame.removeView(preLayout);
+                content_frame.addView(nextLayout);
+            }
+//            build_page();
+            Browser b = new Browser();
+            b.build(myContext, newsUrl);
+            buidl_drawer();
+//            DrawerLayout drawer = (DrawerLayout) myContext.findViewById(R.id.drawer_layout);
+//            drawer.closeDrawer(GravityCompat.START);
+
+        }
+    }
+    public void build_page(){
+        Toolbar toolbar = (Toolbar) myContext.findViewById(R.id.toolbar);
+        myContext.setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) myContext.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Browser with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+    public void buidl_drawer(){
+        Toolbar toolbar = (Toolbar) myContext.findViewById(R.id.toolbar);
+        DrawerLayout drawer = (DrawerLayout) myContext.findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                myContext, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) myContext.findViewById(R.id.nav_view);
+//        navigationView.setNavigationItemSelectedListener(myContext);   //big problem
+    }
     /**
      * read from html and get the JSON data
      * @param newsString
      * @return
      */
-    public static List<News> parseWeatherInfo(String newsString)
+    public static List<News> parseNewsInfo(String newsString)
     {
         List<News> newsList = new ArrayList<News>();
         try
@@ -144,8 +189,11 @@ public class Index {
                 Log.i("data_LENGTH-------", "B" + i);
                 tmp_news.setTitle(tmp.getString("title"));
                 Log.i("data_LENGTH-------", "C" + i);
-                tmp_news.setUrl("");
-
+                try {
+                    tmp_news.setUrl(tmp.getString("url_3w"));
+                }catch (Exception e){
+                    tmp_news.setUrl("");
+                }
                 Log.i("data_LENGTH-------", "D" + i);
                 tmp_news.setSource("");
                 Log.i("data_LENGTH-------", "E" + i);
