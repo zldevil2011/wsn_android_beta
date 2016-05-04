@@ -1,13 +1,16 @@
 package com.newly_dawn.app.wsn;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,14 +21,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.newly_dawn.app.wsn.tools.Browser;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     public Camera father_camera;
+    public WebView father_webView;
     int camera_status = 0;
     public int current_menu = 0;
     private int[] activity_page_list = new int[]{R.id.activity_index_page,R.id.activity_taking_photo_page,
@@ -115,6 +122,11 @@ public class MainActivity extends AppCompatActivity
         if(preLayout != null && nextLayout != null) {
             content_frame.removeView(preLayout);
             content_frame.addView(nextLayout);
+            try{
+                father_webView.destroy();
+            }catch (Exception e){
+
+            }
 //            TakingPhoto tk = new TakingPhoto();
 //            tk.build(LayoutInflater.from(MainActivity.this), MainActivity.this);
 
@@ -201,5 +213,42 @@ public class MainActivity extends AppCompatActivity
             father_camera.release();        // release the camera for other applications
             father_camera = null;
         }
+    }
+
+
+    @Override
+    // 设置回退
+    // 覆盖Activity类的onKeyDown(int keyCoder,KeyEvent event)方法
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        try{
+            if ((keyCode == KeyEvent.KEYCODE_BACK) && father_webView.canGoBack()) {
+                father_webView.goBack(); // goBack()表示返回WebView的上一页面
+                return true;
+            }
+        }catch (Exception e){
+
+        }
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("确认退出吗？");
+        builder.setIcon(android.R.drawable.ic_dialog_info);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 点击“确认”后的操作
+                MainActivity.this.finish();
+            }
+        });
+        builder.setNegativeButton("返回", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 点击“返回”后的操作,这里不设置没有任何操作
+            }
+        });
+//        builder.setCancelable(false);
+        builder.create().show();
+
+        return super.onKeyDown(keyCode, event);
     }
 }

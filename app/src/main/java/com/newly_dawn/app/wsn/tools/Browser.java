@@ -15,13 +15,14 @@ import android.webkit.WebViewClient;
 import com.newly_dawn.app.wsn.MainActivity;
 import com.newly_dawn.app.wsn.R;
 
-public class Browser extends MainActivity{
+public class Browser{
 
     private MainActivity myContext;
     private ProgressDialog dialog;
-    public WebView webView;
+//    public WebView webView;
     public void build(MainActivity context, String url){
         myContext = context;
+//        webView = father_webView;
         dialog = new ProgressDialog(myContext);
         final View nextView;
         Log.i("zl_debug", "Browser");
@@ -40,20 +41,20 @@ public class Browser extends MainActivity{
     public void listener(AppCompatActivity context, String url){
         Log.i("AAAAA", "AAAAAA");
 
-        webView = (WebView) context.findViewById(R.id.webBrowser);
-        webView.getSettings().setJavaScriptEnabled(true);
-        Log.i("AAAAA", "" + webView);
+        myContext.father_webView = (WebView) context.findViewById(R.id.webBrowser);
+        myContext.father_webView.getSettings().setJavaScriptEnabled(true);
+        Log.i("AAAAA", "" + myContext.father_webView);
         Log.i("AAAAA", "12345");
         //WebView加载web资源
         try {
-            webView.loadUrl(url);
+            myContext.father_webView.loadUrl(url);
         }catch (Exception e){
             Log.i("AAAAA", "" + e);
         }
 
         Log.i("AAAAA", "67890");
         //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
-        webView.setWebViewClient(new WebViewClient() {
+        myContext.father_webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 // TODO Auto-generated method stub
@@ -62,20 +63,6 @@ public class Browser extends MainActivity{
                 return true;
             }
         });
-    }
-
-    @Override
-    // 设置回退
-    // 覆盖Activity类的onKeyDown(int keyCoder,KeyEvent event)方法
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.i("onKeyDownL", webView.canGoBack() + "");
-        Log.i("onKeyDownL", keyCode + "");
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
-            Log.i("onKeyDownL", "OK");
-            webView.goBack(); // goBack()表示返回WebView的上一页面
-            return true;
-        }
-        return super.onKeyDown(keyCode,event);
     }
 
 }
