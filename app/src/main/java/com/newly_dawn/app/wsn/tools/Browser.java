@@ -7,17 +7,20 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.newly_dawn.app.wsn.MainActivity;
 import com.newly_dawn.app.wsn.R;
 
-public class Browser{
+public class Browser extends MainActivity{
 
-    private AppCompatActivity myContext;
+    private MainActivity myContext;
     private ProgressDialog dialog;
-    public void build(AppCompatActivity context, String url){
+    public WebView webView;
+    public void build(MainActivity context, String url){
         myContext = context;
         dialog = new ProgressDialog(myContext);
         final View nextView;
@@ -37,7 +40,8 @@ public class Browser{
     public void listener(AppCompatActivity context, String url){
         Log.i("AAAAA", "AAAAAA");
 
-        WebView webView = (WebView) context.findViewById(R.id.webBrowser);
+        webView = (WebView) context.findViewById(R.id.webBrowser);
+        webView.getSettings().setJavaScriptEnabled(true);
         Log.i("AAAAA", "" + webView);
         Log.i("AAAAA", "12345");
         //WebView加载web资源
@@ -58,6 +62,20 @@ public class Browser{
                 return true;
             }
         });
+    }
+
+    @Override
+    // 设置回退
+    // 覆盖Activity类的onKeyDown(int keyCoder,KeyEvent event)方法
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.i("onKeyDownL", webView.canGoBack() + "");
+        Log.i("onKeyDownL", keyCode + "");
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
+            Log.i("onKeyDownL", "OK");
+            webView.goBack(); // goBack()表示返回WebView的上一页面
+            return true;
+        }
+        return super.onKeyDown(keyCode,event);
     }
 
 }

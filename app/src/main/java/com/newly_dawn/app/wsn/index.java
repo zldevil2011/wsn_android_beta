@@ -32,6 +32,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -39,12 +40,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Index {
-    private AppCompatActivity myContext;
+public class Index{
+    private MainActivity myContext;
     private ProgressDialog dialog;
     private String http_str;
     private ListView listview;
-    public void build(AppCompatActivity context){
+    public void build(MainActivity context){
         myContext = context;
         dialog = new ProgressDialog(myContext);
         final View nextView;
@@ -137,25 +138,28 @@ public class Index {
 //            build_page();
             Browser b = new Browser();
             b.build(myContext, newsUrl);
-            buidl_drawer();
+            myContext.current_menu = 7;
+            myContext.build_drawer();
+//            List<Method> methods = getMethod
+//            buidl_drawer();
 //            DrawerLayout drawer = (DrawerLayout) myContext.findViewById(R.id.drawer_layout);
 //            drawer.closeDrawer(GravityCompat.START);
 
         }
     }
-    public void build_page(){
-        Toolbar toolbar = (Toolbar) myContext.findViewById(R.id.toolbar);
-        myContext.setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) myContext.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Browser with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-    }
+//    public void build_page(){
+//        Toolbar toolbar = (Toolbar) myContext.findViewById(R.id.toolbar);
+//        myContext.setSupportActionBar(toolbar);
+//
+//        FloatingActionButton fab = (FloatingActionButton) myContext.findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Browser with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
+//    }
     public void buidl_drawer(){
         Toolbar toolbar = (Toolbar) myContext.findViewById(R.id.toolbar);
         DrawerLayout drawer = (DrawerLayout) myContext.findViewById(R.id.drawer_layout);
@@ -165,6 +169,7 @@ public class Index {
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) myContext.findViewById(R.id.nav_view);
+        Log.i("CLASS_NAME", "" + myContext);
 //        navigationView.setNavigationItemSelectedListener(myContext);   //big problem
     }
     /**

@@ -27,13 +27,13 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     public Camera father_camera;
     int camera_status = 0;
-    private int current_menu = 0;
+    public int current_menu = 0;
     private int[] activity_page_list = new int[]{R.id.activity_index_page,R.id.activity_taking_photo_page,
             R.id.activity_weather_page, R.id.activity_device_page,R.id.activity_setting_page,
-            R.id.activity_setting_page,R.id.activity_login_page};
+            R.id.activity_setting_page,R.id.activity_login_page, R.id.activity_browser_page};
     private int[] activity_list = new int[]{R.layout.activity_index, R.layout.activity_taking_photo,
             R.layout.activity_weather,R.layout.activity_device,R.layout.activity_setting,
-            R.layout.activity_setting,R.layout.activity_login};
+            R.layout.activity_setting,R.layout.activity_login, R.layout.activity_browser};
     private int[] menu_id = new int[]{R.id.nav_index, R.id.nav_camera, R.id.nav_gallery,R.id.nav_slideshow,
             R.id.nav_manage, R.id.nav_share, R.id.nav_send};
     @Override
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         Index index = new Index();
         index.build(MainActivity.this);
         build_page();
-        buidl_drawer();
+        build_drawer();
     }
     public void build_page(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-    public void buidl_drawer(){
+    public void build_drawer(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -67,7 +67,8 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(MainActivity.this);
+//        Log.i("CLASS_NAME", MainActivity.this + "");
     }
     @Override
     public void onBackPressed() {
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity
         int pre_current_menu = current_menu;
         CoordinatorLayout preLayout = getPreLayout();
         CoordinatorLayout nextLayout = getNextLayout(id);
+        Log.i("TEST_BUG", preLayout + " : " + nextLayout);
         if(preLayout != null && nextLayout != null) {
             content_frame.removeView(preLayout);
             content_frame.addView(nextLayout);
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity
         if(!updateLister(current_menu)){
             build_page();
         }
-        buidl_drawer();
+        build_drawer();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
