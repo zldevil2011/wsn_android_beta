@@ -1,6 +1,7 @@
 package com.newly_dawn.app.wsn;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -55,9 +57,16 @@ public class Login{
     public void listener(AppCompatActivity context){
         TextView tv = (TextView)context.findViewById(R.id.imageViewBackground);
         tv.setBackgroundResource(R.drawable.wireless);
-        String loginUrl = "http://www.xiaolong.party" + "/api/send_mail/";
-//        String loginUrl = "http://123.56.77.193/api/v1/send_mail/";
-        new UserAsyncLogin().execute(loginUrl);
+        Button loginBtn = (Button)myContext.findViewById(R.id.loginBtn);
+        loginBtn.setOnClickListener(new LoginButtonListener());
+    }
+    public class LoginButtonListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            String loginUrl = "http://www.xiaolong.party" + "/api/send_mail/";
+            new UserAsyncLogin().execute(loginUrl);
+        }
     }
     public class UserAsyncLogin extends AsyncTask<String, Void, String> {
         @Override
@@ -106,7 +115,7 @@ public class Login{
         object.put("email", username);
         object.put("password", password);
         byte[] data = object.toString().getBytes("UTF-8");
-
+        Log.i("CODE_TEST_", object.toString());
         OutputStream outputStream = urlConn.getOutputStream();
         outputStream.write(data);
         outputStream.flush();
