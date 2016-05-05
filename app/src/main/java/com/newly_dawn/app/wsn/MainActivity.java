@@ -127,9 +127,6 @@ public class MainActivity extends AppCompatActivity
             }catch (Exception e){
 
             }
-//            TakingPhoto tk = new TakingPhoto();
-//            tk.build(LayoutInflater.from(MainActivity.this), MainActivity.this);
-
         }else{
 
             Toast.makeText(MainActivity.this, "敬请期待", Toast.LENGTH_SHORT).show();

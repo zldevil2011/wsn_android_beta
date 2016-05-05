@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:src="@android:drawable/sym_action_email"/>
         <EditText
+            android:id="@+id/username"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
@@ -50,6 +51,8 @@
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_partial_secure"/>
         <EditText
+            android:id="@+id/password"
+            android:inputType="textPassword"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"

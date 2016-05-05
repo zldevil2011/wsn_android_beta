@@ -119,7 +119,6 @@ public class Index{
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             HashMap<String, String> currentItem = (HashMap<String, String>) listview.getItemAtPosition(position);
             String newsUrl = currentItem.get("url");
-            Log.i("TED---", currentItem.get("url"));
             Toast.makeText(myContext, currentItem.get("url"), Toast.LENGTH_SHORT).show();
 
             FrameLayout content_frame = (FrameLayout)myContext.findViewById(R.id.content_frame);
