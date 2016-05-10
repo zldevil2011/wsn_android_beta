@@ -132,16 +132,12 @@ public class Login{
         while ((inputLine = buffer.readLine()) != null) {
             reponseText += inputLine + "\n";
         }
-        Log.i("returnMessage", "" + reponseText);
         JSONObject tmp = new JSONObject(reponseText);
-        Log.i("returnMessage", ""+ tmp.get("access_token"));
         SharedPreferences sharedPreferences;
         SharedPreferences.Editor editor;
         sharedPreferences = myContext.getSharedPreferences("wsnSharedPreferences", Context.MODE_WORLD_READABLE);
         editor = sharedPreferences.edit();
-        editor.putString("token", "" + tmp.get("access_token"));
         editor.apply();
-
         String result = String.valueOf(urlConn.getResponseCode());
         Log.i("CODE_TEST_", String.valueOf(urlConn.getResponseCode()));
         urlConn.disconnect();	//断开连接
