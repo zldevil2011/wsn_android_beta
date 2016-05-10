@@ -1,6 +1,8 @@
 package com.newly_dawn.app.wsn;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -64,6 +66,12 @@ public class Index{
     }
     public void listener(AppCompatActivity context){
         //read news from WangYiTouTiao
+//        SharedPreferences sharedPreferences;
+//        SharedPreferences.Editor editor;
+//        sharedPreferences = myContext.getSharedPreferences("wsnSharedPreferences", Context.MODE_WORLD_READABLE);
+//        String token = sharedPreferences.getString("token", null);
+//        Log.i("tokenTest", token);
+//        Toast.makeText(myContext, token, Toast.LENGTH_SHORT).show();
         final String http = "http://c.m.163.com/nc/article/headline/T1348647853363/0-20.html";
         dialog.setTitle("提示信息");
         dialog.setMessage("loading......");

@@ -1,7 +1,9 @@
 package com.newly_dawn.app.wsn;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -64,7 +66,7 @@ public class Login{
 
         @Override
         public void onClick(View v) {
-            String loginUrl = "http://www.xiaolong.party" + "/api/send_mail/";
+            String loginUrl = "http://www.xiaolong.party" + "/api/login/";
             new UserAsyncLogin().execute(loginUrl);
         }
     }
@@ -112,7 +114,7 @@ public class Login{
         urlConn.setDoOutput(true);
 
         JSONObject object = new JSONObject();
-        object.put("email", username);
+        object.put("username", username);
         object.put("password", password);
         byte[] data = object.toString().getBytes("UTF-8");
         Log.i("CODE_TEST_", object.toString());
@@ -120,6 +122,25 @@ public class Login{
         outputStream.write(data);
         outputStream.flush();
         outputStream.close();
+
+        InputStreamReader in = new InputStreamReader(urlConn.getInputStream()); // 获得读取的内容
+        Log.i("CODE_TEST_", "4");
+        BufferedReader buffer = new BufferedReader(in); // 获取输入流对象
+        String inputLine = null;
+        //通过循环逐行读取输入流中的内容
+        String reponseText = "";
+        while ((inputLine = buffer.readLine()) != null) {
+            reponseText += inputLine + "\n";
+        }
+        Log.i("returnMessage", "" + reponseText);
+        JSONObject tmp = new JSONObject(reponseText);
+        Log.i("returnMessage", ""+ tmp.get("access_token"));
+        SharedPreferences sharedPreferences;
+        SharedPreferences.Editor editor;
+        sharedPreferences = myContext.getSharedPreferences("wsnSharedPreferences", Context.MODE_WORLD_READABLE);
+        editor = sharedPreferences.edit();
+        editor.putString("token", "" + tmp.get("access_token"));
+        editor.apply();
 
         String result = String.valueOf(urlConn.getResponseCode());
         Log.i("CODE_TEST_", String.valueOf(urlConn.getResponseCode()));
