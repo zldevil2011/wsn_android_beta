@@ -91,7 +91,9 @@ public class Login{
         protected String doInBackground(String... params) {
             String code = "404";
             try {
-                code = readHttp(params[0]);
+                code = readHttp(params[0]).get(0);
+                String info = readHttp(params[0]).get(1);
+                Log.i("TTTTT", info);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -100,6 +102,13 @@ public class Login{
         protected void onPostExecute(String code){
             dialog.dismiss();
             if(code.equals("200")){
+//                String info = "not found";
+//                try {
+//                    info = readHttp("http://www.xiaolong.party/api/user_info/?access_token=UniJZqeuI3cF1BNCqGWQYAljhyS6nF").get(1);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                Log.i("user_info", info);
                 Toast.makeText(myContext, "success", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(myContext, "XXXXXXX", Toast.LENGTH_SHORT).show();
@@ -111,7 +120,7 @@ public class Login{
      * @param urlPath
      * @throws Exception
      */
-    public String readHttp(String urlPath) throws Exception {
+    public ArrayList<String> readHttp(String urlPath) throws Exception {
         TextView usernameT = (TextView)myContext.findViewById(R.id.username),
                 passwordT = (TextView)myContext.findViewById(R.id.password);
         String username = usernameT.getText().toString(),
@@ -151,8 +160,12 @@ public class Login{
         editor = sharedPreferences.edit();
         editor.apply();
         String result = String.valueOf(urlConn.getResponseCode());
+        String info = String.valueOf(urlConn.getResponseMessage());
         Log.i("CODE_TEST_", String.valueOf(urlConn.getResponseCode()));
         urlConn.disconnect();	//断开连接
-        return result;  //返回登陆结果
+        ArrayList<String> result_list = new ArrayList<>();
+        result_list.add(result);
+        result_list.add(reponseText);
+        return result_list;  //返回登陆结果
     }
 }
