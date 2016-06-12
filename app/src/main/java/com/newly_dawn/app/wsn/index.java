@@ -2,6 +2,7 @@ package com.newly_dawn.app.wsn;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,7 +28,6 @@ import android.widget.Toast;
 
 import com.newly_dawn.app.wsn.objects.News;
 import com.newly_dawn.app.wsn.objects.WeatherInfo;
-import com.newly_dawn.app.wsn.tools.Browser;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,6 +69,7 @@ public class Index{
         SharedPreferences sharedPreferences;
         sharedPreferences = myContext.getSharedPreferences("wsnSharedPreferences", Context.MODE_WORLD_READABLE);
         String token = sharedPreferences.getString("token", null);
+
         final String http = "http://c.m.163.com/nc/article/headline/T1348647853363/0-20.html";
         dialog.setTitle("提示信息");
         dialog.setMessage("loading......");
@@ -125,24 +126,28 @@ public class Index{
             HashMap<String, String> currentItem = (HashMap<String, String>) listview.getItemAtPosition(position);
             String newsUrl = currentItem.get("url");
             Toast.makeText(myContext, currentItem.get("url"), Toast.LENGTH_SHORT).show();
-
-            FrameLayout content_frame = (FrameLayout)myContext.findViewById(R.id.content_frame);
-            CoordinatorLayout preLayout = (CoordinatorLayout)myContext.findViewById(R.id.activity_index_page);
-            CoordinatorLayout nextLayout = null;
-
-            LayoutInflater factorys = LayoutInflater.from(myContext);
-            final View nextView;
-            nextView = factorys.inflate(R.layout.activity_browser, null);
-            nextLayout = (CoordinatorLayout)nextView.findViewById(R.id.activity_browser_page);
-            Log.i("browser_debug", "" + preLayout + " : " + nextLayout);
-            if(preLayout != null && nextLayout != null) {
-                content_frame.removeView(preLayout);
-                content_frame.addView(nextLayout);
-            }
-//            build_page();
-            Browser b = new Browser();
-            b.build(myContext, newsUrl);
-            myContext.current_menu = 7;
+            Intent intent = new Intent();
+            //Intent传递参数
+            intent.putExtra("url", currentItem.get("url"));
+            intent.setClass(myContext, browser.class);
+            myContext.startActivity(intent);
+//            FrameLayout content_frame = (FrameLayout)myContext.findViewById(R.id.content_frame);
+//            CoordinatorLayout preLayout = (CoordinatorLayout)myContext.findViewById(R.id.activity_index_page);
+//            CoordinatorLayout nextLayout = null;
+//
+//            LayoutInflater factorys = LayoutInflater.from(myContext);
+//            final View nextView;
+//            nextView = factorys.inflate(R.layout.activity_browser, null);
+//            nextLayout = (CoordinatorLayout)nextView.findViewById(R.id.activity_browser_page);
+//            Log.i("browser_debug", "" + preLayout + " : " + nextLayout);
+//            if(preLayout != null && nextLayout != null) {
+//                content_frame.removeView(preLayout);
+//                content_frame.addView(nextLayout);
+//            }
+////            build_page();
+//            Browser b = new Browser();
+//            b.build(myContext, newsUrl);
+//            myContext.current_menu = 7;
             myContext.build_drawer();
 //            List<Method> methods = getMethod
 //            buidl_drawer();

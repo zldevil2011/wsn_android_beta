@@ -3,6 +3,7 @@ package com.newly_dawn.app.wsn;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -46,21 +47,23 @@ public class Login{
         Log.i("zl_debug", "Login");
         Toolbar toolbar = (Toolbar) context.findViewById(R.id.toolbar);
         context.setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) context.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Login Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) context.findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Login Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
         listener(context);
     }
     public void listener(AppCompatActivity context){
         TextView tv = (TextView)context.findViewById(R.id.imageViewBackground);
-        tv.setBackgroundResource(R.drawable.wireless);
+//        tv.setBackgroundResource(R.drawable.wireless);
         Button loginBtn = (Button)myContext.findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(new LoginButtonListener());
+        TextView register = (TextView)context.findViewById(R.id.registerTextView);
+        register.setOnClickListener(new RegisterTextViewListener());
     }
     public class LoginButtonListener implements View.OnClickListener {
 
@@ -68,6 +71,15 @@ public class Login{
         public void onClick(View v) {
             String loginUrl = "http://www.xiaolong.party" + "/api/login/";
             new UserAsyncLogin().execute(loginUrl);
+        }
+    }
+    public class RegisterTextViewListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(myContext, register.class);
+//            myContext.startActivityForResult(myContext, register.class);
+            myContext.startActivity(intent);
         }
     }
     public class UserAsyncLogin extends AsyncTask<String, Void, String> {

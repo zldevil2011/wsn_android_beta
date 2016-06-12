@@ -8,13 +8,13 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.newly_dawn.app.wsn.Login"
     tools:showIn="@layout/activity_login"
-    android:background="@android:color/holo_green_light"
+    android:background="@drawable/blue_sky"
     >
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
-        android:gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="80dp"
         android:background="@drawable/round"
         android:orientation="vertical"
         android:layout_gravity="center_horizontal">
@@ -22,7 +22,13 @@
             android:id="@+id/imageViewBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            android:text="WSN"
+            android:textAlignment="center"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="#ffffff"
+            android:textSize="48dp"
+            android:textIsSelectable="false"
+            android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,7 +45,7 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:hint=""/>
+            android:hint="请输入邮箱"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -56,7 +62,7 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:hint=""/>
+            android:hint="请输入密码"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -78,6 +84,7 @@
         android:layout_marginRight="20dp"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/registerTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
